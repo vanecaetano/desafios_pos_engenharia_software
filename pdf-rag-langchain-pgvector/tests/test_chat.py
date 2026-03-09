@@ -47,6 +47,31 @@ def test_run_chat_prints_llm_response(env_vars, mocker, capsys):
     assert "RESPOSTA: Resposta da LLM." in captured.out
 
 
+def test_run_chat_handles_eof(env_vars, mocker, capsys):
+    mocker.patch("src.chat.ChatGoogleGenerativeAI")
+    mocker.patch("builtins.input", side_effect=EOFError)
+
+    from src.chat import run_chat
+
+    run_chat()
+
+    captured = capsys.readouterr()
+    assert "Encerrando chat." in captured.out
+
+
+def test_run_chat_handles_llm_error(env_vars, mocker, capsys):
+    mocker.patch("src.chat.retrieve_context", side_effect=RuntimeError("DB offline"))
+    mocker.patch("src.chat.ChatGoogleGenerativeAI")
+    mocker.patch("builtins.input", side_effect=["Pergunta?", KeyboardInterrupt])
+
+    from src.chat import run_chat
+
+    run_chat()
+
+    captured = capsys.readouterr()
+    assert "Erro ao processar pergunta" in captured.out
+
+
 def test_run_chat_skips_empty_input(env_vars, mocker, capsys):
     mocker.patch("src.chat.retrieve_context", return_value="ctx")
     mock_llm = mocker.MagicMock()

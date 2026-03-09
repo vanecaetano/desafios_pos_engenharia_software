@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +23,13 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL: str = "models/gemini-embedding-001"
     LLM_MODEL: str = "gemini-2.5-flash-lite"
     COLLECTION_NAME: str = "pdf_documents"
+
+    @field_validator("CHUNK_SIZE", "SEARCH_K")
+    @classmethod
+    def must_be_positive(cls, v: int, info) -> int:
+        if v <= 0:
+            raise ValueError(f"{info.field_name} deve ser maior que zero")
+        return v
 
     @property
     def postgres_connection_string(self) -> str:

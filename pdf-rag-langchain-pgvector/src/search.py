@@ -1,7 +1,11 @@
+import logging
+
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_postgres import PGVector
 
 from src.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def _build_vector_store() -> PGVector:
@@ -17,6 +21,12 @@ def _build_vector_store() -> PGVector:
 
 
 def retrieve_context(query: str) -> str:
+    if not query or not query.strip():
+        raise ValueError("A consulta não pode ser vazia")
+
+    if not settings.GOOGLE_API_KEY:
+        raise ValueError("GOOGLE_API_KEY não está configurada")
+
     store = _build_vector_store()
     results = store.similarity_search_with_score(query, k=settings.SEARCH_K)
 

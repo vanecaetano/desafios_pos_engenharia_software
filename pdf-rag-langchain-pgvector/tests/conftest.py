@@ -23,3 +23,6 @@ def env_vars(monkeypatch):
     monkeypatch.setenv("POSTGRES_DB", "testdb")
     monkeypatch.setenv("POSTGRES_USER", "testuser")
     monkeypatch.setenv("POSTGRES_PASSWORD", "testpass")
+
+    from src.config import settings
+    monkeypatch.setattr(settings, "GOOGLE_API_KEY", "test-api-key")

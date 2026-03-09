@@ -71,7 +71,7 @@ chmod +x start.sh
 ```bash
 # 1. Clone e entre no diretório
 git clone <repo-url>
-cd desafio1
+cd pdf-rag-langchain-pgvector
 
 # 2. Crie e ative o virtual environment
 python -m venv venv

@@ -1,4 +1,17 @@
+import pytest
 from langchain_core.documents import Document
+
+
+def test_retrieve_context_raises_on_empty_query(env_vars, mocker):
+    mocker.patch("src.search._build_vector_store")
+
+    from src.search import retrieve_context
+
+    with pytest.raises(ValueError, match="vazia"):
+        retrieve_context("")
+
+    with pytest.raises(ValueError, match="vazia"):
+        retrieve_context("   ")
 
 
 def test_retrieve_context_concatenates_results(env_vars, mocker):

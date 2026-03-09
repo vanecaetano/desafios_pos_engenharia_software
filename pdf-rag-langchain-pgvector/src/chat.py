@@ -1,8 +1,12 @@
+import logging
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 
 from src.config import settings
 from src.search import retrieve_context
+
+logger = logging.getLogger(__name__)
 
 _PROMPT_TEMPLATE = """\
 CONTEXTO:
@@ -37,6 +41,9 @@ def build_prompt(context: str, question: str) -> str:
 
 
 def run_chat() -> None:
+    if not settings.GOOGLE_API_KEY:
+        raise ValueError("GOOGLE_API_KEY não está configurada")
+
     llm = ChatGoogleGenerativeAI(
         model=settings.LLM_MODEL,
         google_api_key=settings.GOOGLE_API_KEY,
@@ -47,18 +54,23 @@ def run_chat() -> None:
     while True:
         try:
             question = input("PERGUNTA: ").strip()
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, EOFError):
             print("\nEncerrando chat.")
             break
 
         if not question:
             continue
 
-        context = retrieve_context(question)
-        prompt = build_prompt(context=context, question=question)
-        response = llm.invoke([HumanMessage(content=prompt)])
-        print(f"RESPOSTA: {response.content}\n")
+        try:
+            context = retrieve_context(question)
+            prompt = build_prompt(context=context, question=question)
+            response = llm.invoke([HumanMessage(content=prompt)])
+            print(f"RESPOSTA: {response.content}\n")
+        except Exception as e:
+            logger.error(f"Erro ao processar pergunta: {e}")
+            print("Erro ao processar pergunta. Tente novamente.\n")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     run_chat()

@@ -11,6 +11,13 @@ def pdf_path(tmp_path):
     return str(p)
 
 
+def test_ingest_pdf_raises_on_missing_file(env_vars):
+    from src.ingest import ingest_pdf
+
+    with pytest.raises(FileNotFoundError):
+        ingest_pdf("arquivo_inexistente.pdf")
+
+
 def _patch_ingest_dependencies(mocker, fake_chunks):
     mocker.patch("src.ingest.PyPDFLoader.load", return_value=fake_chunks)
     mocker.patch(
