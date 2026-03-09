@@ -1,0 +1,21 @@
+# Environment variables (secrets)
+.env
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Testing
+.pytest_cache/
+
+# PDFs (user data)
+*.pdf
+
+# OS
+desktop.ini
+Thumbs.db
+.DS_Store
