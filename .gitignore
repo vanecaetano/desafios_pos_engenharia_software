@@ -12,8 +12,9 @@ build/
 # Testing
 .pytest_cache/
 
-# PDFs (user data)
+# PDFs (user data, except document.pdf)
 *.pdf
+!document.pdf
 
 # OS
 desktop.ini
